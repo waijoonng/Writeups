@@ -1,0 +1,24 @@
+What is the 'current_value' for kernel.osrelease?
+- select  * from kernel_info
+
+What is the uid for the bravo user?
+- select * from users where username='bravo'
+
+ One of the users performed a 'Binary Padding' attack. What was the target file in the attack? 
+-  select * from file where directory='/home/$USERNAME'; 
+
+What is the hash value for this file?
+- select * from hash where directory='/home/$USERNAME'
+
+Check all file hashes in the home directory for each user. One file will not show any hashes. Which file is that?
+- Check list of users with this command: selecct * from users
+- followed by this command -> select * from hash where directory='/home/$USERNAME'
+
+There is a file that is categorized as malicious in one of the home directories. Query the Yara table to find this file. Use the sigfile which is saved in '/var/osquery/yara/scanner.yara'. Which file is it?
+-  select * from yara where path ="/home/$username/$filename" and sigfile = "/var/osquery/yara/scanner.yara";
+
+What were the 'matches'?
+- found in above query
+
+Scan the file from Q#3 with the same Yara file. What is the entry for 'strings'?
+- found in above query
