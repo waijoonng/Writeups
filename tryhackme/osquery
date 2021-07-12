@@ -1,3 +1,6 @@
+==========
+Task 8
+==========
 What is the 'current_value' for kernel.osrelease?
 - select  * from kernel_info
 
@@ -16,9 +19,37 @@ Check all file hashes in the home directory for each user. One file will not sho
 
 There is a file that is categorized as malicious in one of the home directories. Query the Yara table to find this file. Use the sigfile which is saved in '/var/osquery/yara/scanner.yara'. Which file is it?
 -  select * from yara where path ="/home/$username/$filename" and sigfile = "/var/osquery/yara/scanner.yara";
+- Alternatvie is to select * from yara like path ="/home/%%" and sigfile = "/var/osquery/yara/scanner.yara";
 
 What were the 'matches'?
 - found in above query
 
 Scan the file from Q#3 with the same Yara file. What is the entry for 'strings'?
 - found in above query
+
+========
+Task 9 
+========
+ What is the description for the Windows Defender Service? 
+- seletc * from services where name like '%defend%' 
+
+There is another security agent on the Windows endpoint. What is the name of this agent?
+- selecct * from programs
+
+What is required with win_event_log_data?
+- Run select * from win_event_log_data
+
+How many sources are returned for win_event_log_channels?
+- select count(*) from win_event_log_channels
+
+What is the schema for win_event_log_data?
+- .schema win_event_log_data
+
+The previous file scanned on the Linux endpoint with Yara is on the Windows endpoint.  What date/time was this file first detected? (Answer format: YYYY-MM-DD HH:MM:SS)
+- Find Microsoft-Windows-Windows Defender/Operational for eventid=1116 and open xmlview
+
+What is the query to find the first Sysmon event? Select only the event id, order by date/time, and limit the output to only 1 entry.
+-select eventid from win_event_log_data where source="Microsoft-Windows-Sysmon/Operational" order by datetime limit 1;
+
+What is the Sysmon event id?
+-select evendid from win_event_log_data where source="Microsoft-Windows-Sysmon/Operational" limit 1;
