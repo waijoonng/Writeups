@@ -3,11 +3,14 @@ What tools did the attacker use? (Order by the occurrence in the log)
 
 What endpoint was vulnerable to a brute-force attack?
 - ::ffff:192.168.10.5 - - [11/Apr/2021:09:16:31 +0000] "POST /rest/user/login HTTP/1.0" 200 831 "-" "Mozilla/5.0 (Hydra)"
-                                                                                                                                                                   What endpoint was vulnerable to SQL injection?
+
+What endpoint was vulnerable to SQL injection?
 - GET /res/products/search has 200 response
-                                                                                                                                                                   What parameter was used for the SQL injection?
+
+What parameter was used for the SQL injection?
 - GET /rest/products/search?q=1%3BSELECT%20
-                                                                                                                                                                   What endpoint did the attacker try to use to retrieve files? (Include the /)
+
+What endpoint did the attacker try to use to retrieve files? (Include the /)
 - GET /ftp/coupons_2013.md.bak HTTP/1.1
 
 What section of the website did the attacker use to scrape user email addresses?                  
