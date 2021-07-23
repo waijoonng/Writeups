@@ -1,22 +1,32 @@
-
 What registry key contains the same command that is executed within a scheduled task?
+- Check using sysinternals autorun tool
 
 What analysis tool will immediately close if/when you attempt to launch it?
+- Check using sysinternals autorun tool
 
 What is the full WQL Query associated with this script?
+- Check using sysinternals autorun tool
 
 What is the script language?
+- Check using sysinternals autorun tool
 
 What is the name of the other script?
+- Check using sysinternals autorun tool
 
 What is the name of the software company visible within the script?
+- Check the script
 
 What 2 websites are associated with this software company? (answer, answer)
+- Check the script
 
 Search online for the name of the script from Q5 and one of the websites from the previous answer. What attack script comes up in your search?
+- Google the script and the first result will be it
 
 What is the location of this file within the local machine?
+- Most of the scripts are in this folder
+
 Which 2 processes open and close very quickly every few minutes? (answer, answer)
+- Check scheduled tasks
 
 What is the parent process for these 2 processes?
 
