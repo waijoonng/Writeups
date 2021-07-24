@@ -29,39 +29,116 @@ Which 2 processes open and close very quickly every few minutes? (answer, answer
 - Check scheduled tasks
 
 What is the parent process for these 2 processes?
+- Get from process hacker
 
 What is the first operation for the first of the 2 processes?
+- Check from procmon
 
 Inspect the properties for the 1st occurrence of this process. In the Event tab what are the 4 pieces of information displayed? (answer, answer, answer, answer)
+- Check from procmon
 
 Inspect the disk operations, what is the name of the unusual process?
+- Check in process hacker
 
 Run Loki. Inspect the output. What is the name of the module after `Init`?
+
 Regarding the 2nd warning, what is the name of the eventFilter?
+[WARNING] CLASS: __eventFilter
+MD5: e927bbd0b8f2b60275ed1d8e821696cc NAME: ProcessStartTrigger QUERY: SELECT * FROM Win32_ProcessStartTrace WHERE ProcessName = 'procexp64.exe'
 
 For the 4th warning, what is the class name?
+[WARNING] CLASS: __FilterToConsumerBinding
+
 
 What binary alert has the following 4d5a90000300000004000000ffff0000b8000000 as FIRST_BYTES?
+[ALERT]
+FILE: C:\TMP\nbtscan.exe SCORE: 160 TYPE: EXE SIZE: 36864
+FIRST_BYTES: 4d5a90000300000004000000ffff0000b8000000 / MZ
+
+
 According to the results, what is the description listed for reason 1?
+REASON_1: File Name IOC matched PATTERN: \\nbtscan\.exe SUBSCORE: 60 DESC: Known Bad / Dual use classics
 
 Which binary alert is marked as APT Cloaked?
+[ALERT]
+FILE: C:\TMP\p.exe SCORE: 105 TYPE: EXE SIZE: 381816
+FIRST_BYTES: 4d5a90000300000004000000ffff0000b8000000 / MZ
+MD5: aeee996fd3484f28e5cd85fe26b6bdcd
+SHA1: cd23b7c9e0edef184930bc8e0ca2264f0608bcb3
+SHA256: f8dbabdfa03068130c277ce49c60e35c029ff29d9e3c74c362521f3fb02670d5 CREATED: Sat Mar  2 16:46:37 2019 MODIFIED: Sat Mar  2 16:37:37 2019 ACCESSED: Sat Mar  2 16:46:37 2019
+REASON_1: File Name IOC matched PATTERN: \\[a-zA-Z]\.exe$ SUBSCORE: 45 DESC: Typical Malware Name
+REASON_2: Yara Rule MATCH: APT_Cloaked_PsExec SUBSCORE: 60
+DESCRIPTION: Looks like a cloaked PsExec. May be APT group activity. REF: -
+MATCHES: Str1: psexesvc.exe Str2: Sysinternals PsExec
 
 What are the matches? (str1, str2)
+Same as above
 
 Which binary alert is associated with somethingwindows.dmp found in C:\TMP?
+[WARNING]
+FILE: C:\TMP\schtasks-backdoor.ps1 SCORE: 60 TYPE: UNKNOWN SIZE: 7022
+FIRST_BYTES: 66756e6374696f6e20496e766f6b652d5461736b / function Invoke-Task
+MD5: df75d2c46db188c50e73dbbb3a164a04
+SHA1: 175ffee53f7d68176911e49505dd964a7f6233d3
+SHA256: 0befdf5ca007e9d6f85167dde03e290b14d3c1556a8b7540f2dbd6b7911bea81 CREATED: Sat Mar  2 16:47:04 2019 MODIFIED: Sat Mar  2 16:37:37 2019 ACCESSED: Sat Mar  2 16:47:04 2019
+REASON_1: Yara Rule MATCH: PowerShell_Susp_Parameter_Combo SUBSCORE: 60
+DESCRIPTION: Detects PowerShell invocation with suspicious parameters REF: https://goo.gl/uAic1X
+MATCHES: Str1:  -enc  Str2:  -nop  Str3:  -ep bypass  Str4:  -exec bypass
+[INFO] Scanning memory dump file somethingwindows.dmp
 
 Which binary is encrypted that is similar to a trojan?
+[WARNING]
+FILE: C:\TMP\xCmd.exe SCORE: 60 TYPE: EXE SIZE: 843776
+FIRST_BYTES: 4d5a90000300000004000000ffff0000b8000000 / MZ
+MD5: 27aee7f36b4099e8db3e3d3898474196
+SHA1: c26dc6e4ef77cafafa154fa9529c4ce79a8fc78b
+SHA256: 6c8eea3ba31463a04d041f4c9ff50b50d9b5945d3306fee35fb4b5bfd292692b CREATED: Sat Mar  2 16:46:51 2019 MODIFIED: Sat Mar  2 16:37:37 2019 ACCESSED: Sat Mar  2 16:46:51 2019
+REASON_1: Yara Rule MATCH: XOR_4byte_Key SUBSCORE: 60
+DESCRIPTION: Detects an executable encrypted with a 4 byte XOR (also used for Derusbi Trojan) REF: http://blog.airbuscybersecurity.com/post/2015/11/Newcomers-in-the-Derusbi-family
+MATCHES: Str1: \ufffd\ufffdt\n1\x06\x01\x1e\ufffd\ufffd\x04I\ufffd\ufffd
 
 There is a binary that can masquerade itself as a legitimate core Windows process/image. What is the full path of this binary?
+[ALERT]
+FILE: C:\Users\Public\svchost.exe SCORE: 155 TYPE: EXE SIZE: 8192
+FIRST_BYTES: 4d5a90000300000004000000ffff0000b8000000 / MZ
+MD5: 4635935fc972c582632bf45c26bfcb0e
+SHA1: 7c5329229042535fe56e74f1f246c6da8cea3be8
+SHA256: abd4afd71b3c2bd3f741bbe3cec52c4fa63ac78d353101d2e7dc4de2725d1ca1 CREATED: Sat Mar  2 16:45:44 2019 MODIFIED: Sat Mar  2 16:37:37 2019 ACCESSED: Sat Mar  2 16:45:44 2019
+REASON_1: File Name IOC matched PATTERN: \\(Users|Documents and Settings)\\[^\\]{1,20}\\[^\\]{1,20}\.(exe|dll|vbs|bat|ps1) SUBSCORE: 40 DESC: Stuff running where it normally shouldn't
+REASON_2: Yara Rule MATCH: Suspicious_Size_svchost_exe SUBSCORE: 60
+DESCRIPTION: Detects uncommon file size of svchost.exe REF: -
+
 
 What is the full path location for the legitimate version?
+[INFO] Scanning Process PID: 728 NAME: svchost.exe OWNER: SYSTEM CMD: C:\Windows\system32\svchost.exe -k DcomLaunch PATH: C:\Windows\system32\svchost.exe
 
 What is the description listed for reason 1?
+[ALERT]
+FILE: C:\Users\Public\procdump64.exe SCORE: 140 TYPE: EXE SIZE: 341672
+FIRST_BYTES: 4d5a90000300000004000000ffff0000b8000000 / MZ
+MD5: a92669ec8852230a10256ac23bbf4489
+SHA1: 4bed038c66e7fdbbfb0365669923a73fbc9bb8f4
+SHA256: 16f413862efda3aba631d8a7ae2bfff6d84acd9f454a7adaa518c7a8a6f375a5 CREATED: Sat Mar  2 16:45:13 2019 MODIFIED: Sat Mar  2 16:37:37 2019 ACCESSED: Sat Mar  2 16:45:13 2019
+REASON_1: File Name IOC matched PATTERN: \\(Users|Documents and Settings)\\[^\\]{1,20}\\[^\\]{1,20}\.(exe|dll|vbs|bat|ps1) SUBSCORE: 40 DESC: Stuff running where it normally shouldn't
 
 There is a file in the same folder location that is labeled as a hacktool. What is the name of the file?
+[WARNING]
+FILE: C:\Users\Public\en-US.js SCORE: 70 TYPE: UNKNOWN SIZE: 14127
+FIRST_BYTES: 7661722062696e617279203d202272756e646c6c / var binary = "rundll
+MD5: 8c217dfe0a00eaf9ffe92daf403d404a
+SHA1: 7ea62fd644dd9b9f82944268ea649fd007ee354d
+SHA256: 41270685a7496961e625773bcfe1ac50727847c66de69a9b2a2bf34699c30f54 CREATED: Sat Mar  2 16:40:00 2019 MODIFIED: Sat Mar  2 16:45:54 2019 ACCESSED: Sat Mar  2 16:40:00 2019
+REASON_1: Yara Rule MATCH: CACTUSTORCH SUBSCORE: 70
+DESCRIPTION: Detects CactusTorch Hacktool REF: https://github.com/mdsecactivebreach/CACTUSTORCH
+MATCHES: Str1: binary = "rundll32.exe" Str2: var binary = "rundll32.exe"; Str3: var serialized_obj = "
 
-What is the name of the Yara Rule MATCH?
+What is the name of the Yara Rule MATCH?\
+-Answer found above
 
 Which binary didn't show in the Loki results?
+-mim.exe
 
 Complete the yar rule file located within the Tools folder on the Desktop. What are 3 strings to complete the rule in order to detect the binary Loki didn't hit on? (answer, answer, answer)
+- strings64.exe c:\tmp\mim.exe | findstr exe
+- strings64.exe c:\tmp\mim.exe | findstr ps1
+- strings64.exe c:\tmp\mim.exe | findstr 7
