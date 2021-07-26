@@ -27,8 +27,8 @@ What process does the payload attempt to terminate?
 What DLL file does the payload attempt to remove? (full path)
 - Decode the value found in Computer\HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion
 
-
 What is the Windows Event ID associated with this service?
+- Event Viewer > Application and Service Logs > Microsoft > Window > PrintService
 
 What is listed as the New Default Printer?
 - Search for printer and scanner in windows
@@ -46,33 +46,49 @@ Decode the payload. What is the a visible partial path?
 - /admin/get.php in the payload 
 
 This is the default communication profile the agent used to connect to the attack machine. What attack framework was used? What is the name of the variable? (answer, answer)
-
+- defaultprofile,empire
 
 What other file paths are you likely to find in the logs? (answer, answer)
-
+- https://holdmybeersecurity.com/2017/12/05/part-1-intro-to-threat-hunting-with-powershell-empire-windows-event-logs-and-graylog/
 
 What is the MITRE ATT&CK URI for the attack framework?
 - Google mitre empire
 
 What was the FQDN of the attacker machine that the suspicious process connected to?
+- Procmon filter to powershell.exe and monitor only network activity
 
 What other process connected to the attacker machine?
+- Monitor only network activity using procmon and check what is connecting to the attacker ip other than powershell
 
 What is the PID for this process?
+- Check using procmon
 
 What was the path for the first image loaded for the process identified in Q's 19 & 20?
+- Using the PID from the previous process as a filter, monitor network activity and show process thread and activity to find the first load image operation
 
 What Symon event were generated between these 2 processes? What is its associated Event ID #? (answer, answer)
+- go to Event Viewer, go to 5:07 (time difference), since the image from previous question was created at 6:07
 
 What is the UTC time for the first event between these 2 processes?
+- Get the first one of event id 8
 
 What is the value under Date and Time? (MM/DD/YYYY H:MM:SS [AM/PM])
+- Refer to the above
 
 What is the first operation listed by the 2nd process starting with the Date and Time from Q25?
+- Refer to the above
+
 What is the full registry path that was queried by the attacker to get information about the victim?
+- HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Releaseid
 
 What is the name of the last module in the stack from this event which had a successful result?
+- Search for the registry in procmon then check for result success properties under stack tab 
 
-Most likely what module within the attack framework was used between the 2 processes? 
+Most likely what module within the attack framework was used between the 2 processes?
+- Invoke-PSInject 
 
 What is the MITRE ID for this technique?
+- T1055
+
+
+Referrence: https://haksthehax.com/2021/07/08/tryhackme-investigating-windows-3-x/
