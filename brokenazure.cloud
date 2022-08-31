@@ -261,7 +261,7 @@ SELECT * FROM vpn_employee_data.
 
 https://www.brokenazure.cloud/drm0s7q6nhhvxk8e57yqvhd814/index.html
 
-
-
+Final Challenge:
+We have a vpn password and a vpn file from challenge 1. Login to the vpn and access the internal network. We can now find the flag in the other machine.
 
 
