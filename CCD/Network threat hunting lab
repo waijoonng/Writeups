@@ -1,0 +1,39 @@
+On November 8th, 2022.The anti-virus (AV) raised an alert that an executable (moviedownloader.exe) was flagged as malware.
+
+
+1. What is the domain name the APT used for the c2 communication?
+- Fiter for moviedownloader.exe in kibana. There will be sysmon results. Find a dnsQuery rule and you will see the domain name being queried is downloadmoviesonline.shop
+
+
+2. In Nov 13, 2022 @ 12:49:56.217 the the APT was able to compromise the DC by remotely installing a service, some seconds before installing the service, there was a successful network authentication from an endpoint using the domain admin account, what was the IP address that authenticated to the DC?
+- First we find out the DC hostname via hostname field. If we narrow down to the time specitied and filter for DC-01, we can see that there is event 7045 for psexec on DC-01. 
+- To find the user, use filter host.hostname : "DC-01" and related.user : ("administrator" or "Administrator" ) then we will find a login event that is from 192.168.70.139 at the timestamp 12:49:35.109 
+
+
+3. The APT used powershell Invoke-WebRequest (iwr) and Invoke-Expression (iex)  cmdlets to download malicious content from the C2 server and execute them on the infected endpoints,  what was the full url that gets passed to the iwr cmdlet?
+- Kibana query used: "powershell" and ("iex" or "iwr")
+
+
+4. Looking at the EDR events associated with the c2 IP address. What are the three destination ports did the attacker use to interact with the C2? (lower to higher)
+- Kibana query used: "ip address" and then filter by destination port. 
+
+5. Checking the traffic towards the C2 port 8000, it showed the APT was using powershell to download a binary file to the endpoint. What is the file name that the APT was downloading?
+- Inspect the event on port 8000 and find the file name in http request body content.
+
+6. Searching for the APT IP address using endpoint logs, it seems they were utilizing PowerShell Empire C2. What is the user-agent used in most HTTP requests to the C2 server?
+- Kibana query used: "ip address" and then filter by http request body content. 
+
+7. Inspecting the network traffic, we came across "upload.downloadmoviesonline.shop" the APT was able to exfiltrate data over alternative channels. Which DNS record type is the ATP used to send data out of the network?
+- Kibana query used: "upload.downloadmoviesonline.shop" and then filter by port 53.A lot of type 16 queries. 
+
+8. What is the full executable path the APT used to exfiltrate the data?
+- Same query as Q7. Toogle column value for process name.
+
+9. How many DNS requests from cmurfy's endpoint querying TXT record, with a dns status code as NXDOMAIN initiated towards upload.downloadmoviesonline.shop subdomain?
+- Navigate to visualise library and use template for dns response code. Use filter host.name : "Desktop-KOAA32A" and destination.port : "53" and dns.question.type : "TXT" 
+
+
+
+- File has network connection to 3.210.135.57 which belongs to malicious domain in q1
+- hostname Desktop-KOAA32A 192.168.70.139 
+- DC name is DC-01 192.168.70.131
