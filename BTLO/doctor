@@ -1,0 +1,32 @@
+What is the name of the malicious process? Provide the full path of the binary (3 points)
+- Run ps -aux and use locate function to find the file.
+
+What is the port that the malicious process listens on? (3 points)
+- Find via netstat
+
+Provide the full URL from which the malware was downloaded to the system (3 points)
+- Find in audit logs
+
+There was another file downloaded from the same server. Provide the full URL (3 points)
+- Filter via the IP in audit logs
+
+What is the port running on the system that was used as the entry point, and what was the type of vulnerability exploited? (3 points)
+- web facing port. SQL related attack
+
+What is the name of the file that had the vulnerability? Provide the full system path (3 points)
+- You can see the file searcher.php is quite vulnerable.
+
+What is the name of the file created and what is the first command executed by the attacker? (3 points)
+- After attacker exfiltrated stuff into temp.txt, attacker uploaded file and started writing commands.
+/prod/old/cc.php?cmd=xxx
+
+The attacker obtained a reverse shell, what was the language used to create the reverse shell and what is the lowest port used? (4 points)
+- After getting a shell, attacker had to stablize it with python.
+
+
+
+42.235.191.173
+18.132.210.238
+
+
+http://42.235.191.173:55799.Mozi.a
