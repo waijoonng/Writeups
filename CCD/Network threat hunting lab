@@ -15,7 +15,7 @@ On November 8th, 2022.The anti-virus (AV) raised an alert that an executable (mo
 
 
 4. Looking at the EDR events associated with the c2 IP address. What are the three destination ports did the attacker use to interact with the C2? (lower to higher)
-- Kibana query used: "ip address" and then filter by destination port. 
+- Kibana query used: "3.210.135.57" and then filter by destination port. 
 
 5. Checking the traffic towards the C2 port 8000, it showed the APT was using powershell to download a binary file to the endpoint. What is the file name that the APT was downloading?
 - Inspect the event on port 8000 and find the file name in http request body content.
