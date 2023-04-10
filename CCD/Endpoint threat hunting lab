@@ -1,0 +1,47 @@
+On Nov 8th, an executable was launched from the downloads folder for one of the domain users. What is the imphash for that executable?
+- use query file.path:*download*
+
+
+Which process was responsible for creating the previously mentioned process?
+- Look at parent process moviedownloader using sysmon event id 1. 
+
+
+To be persistent, the APT used the registry run keys to place a backdoor on cmurfy endpoint. What is the registry path that was used?
+
+
+
+A malicious bat file was executed on the compromised endpoint, which allowed the APT to take more control and eventually escalate their privileges. What is the full path of the bat file?
+- Search process.parent.executable : *moviedownloader*
+
+
+The bat file launched a PowerShell process with the following PID 7932. Based on the PID, what was the 1st command the attacker ran on the compromised endpoint?
+
+
+
+4 days after the initial compromise, the APT group started interacting heavily with the compromised endpoint using PowerShell (pid: 6024). what was the IntegrityLevel of the 1st running PowerShell encoded command?
+
+
+
+On Nov 13, 2022 @ 12:49:56.217, the APT compromised the DC (dc-01) by installing a service remotely using Sysinternals remote administration tool. What was the installed service name?
+- process.command_line: *psexec*
+
+
+Looking at the initially compromised endpoint, we could track how the attacker interacted with the DC. from the command line. What is the domain admin password?
+- event.category: process and process.name:cmd.exe and run it on 192.168.70.131
+
+Based on the imphash which belongs to  .NET, what was the C2 framework the APT initially used?
+
+
+
+Timeline 
+
+Nov 8 2022 
+10:36 User cmurfy downloaded movidedownloader.exe into host Desktop-KOAA32A (192.168.70.131)
+11:38 Whoami was ran
+11L41 cmd.exe /c SHellCmd
+11:44 powershell was ran
+11:44 C:\Users\cmurfy.cyberdefenders\update.bat created 
+11:44 Powershell was launched to call out empire module.
+11:44 Network connection to 3.210.135.57
+14:31 RDP connection to 192.168.70.135
+
