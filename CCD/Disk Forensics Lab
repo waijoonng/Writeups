@@ -1,0 +1,67 @@
+1. Investigations start by footprinting the subject system. What is the Windows build number?
+14393
+
+2. What is the HOSTNAME?
+MAGENTA
+
+3. What is the system timezone?
+Eastern Standard Time
+
+4. What was the last time when the machine was powered off? UTC 24-hour
+2021-07-30 15:25:38
+
+5. What is the system IP address?
+10.10.5.113
+
+
+6. What is the MAC address of the last gateway the machine connected to?
+16-1C-22-77-E5-9C
+
+7. Checking shared folders is a common part of forensic investigations. What is the full path of the shared folder on the system?
+C:\Users
+
+
+8. Now let's dive into the incident. As per the triggered alert, the user used Telegram to download an executable file. Telegram is not a common app in an enterprise environment. When was Telegram installed?
+- Found multiple entries in sysmon event id 1 for telegram on 11/11/22. Nothing found in the registry files.
+
+9. By looking at the time stamp of the triggered alert and Telegram installation date, it looks like Telegram was recently installed...few hours before the triggered alert. Is the user trying to bypass network monitoring?
+How long did the employee use Telegram? Minimal usage may indicate that the user indeed used Telegram solely to download the executable and bypass network security monitoring (NSM).
+- Check user assist using the userassist tool.
+
+
+10. "Minecraft.exe", the downloaded file seems very suspicious! Upon investigation, it turned out it's a popular Command & Control (c2) framework. Provide the framework name.
+- Get the SHA256 and submit to virustotal.
+
+
+11. Good job! So far, we have confirmed the user's malicious intent. A possible insider cooperating with an external attacker! Attackers maintain persistence using different ways. One is by creating a new user account. Let's dig further and list existing user accounts. What is the username of the newest account?
+- From SAM file, cpitter was created on 11/11/22 but was never logged in according to SAM. All activities were on administrator account.
+
+
+12. Another popular technique to maintain persistence is through startup "services." What is the name of the service the attacker created?
+- Checking 7045 events we will see that there is a service called cleanup-schedule installed and the filename is minecraft.exe
+
+13. A third persistence technique is "scheduled tasks" that run at a specific time. Check out the existing scheduled tasks, analyze them, and spot the one the attacker created. When was the first run time of the task?
+- C:\Windows\Tasks has a task named spawn and the date is <StartBoundary>2022-11-11T20:10:00</StartBoundary>
+
+14. Sysmon logs showed the execution of "svchost.exe" from Downloads. An utterly odd place for a system file like "svchost.exe" to exist. Probably it's just a malicious file being renamed to disguise detection. Can you determine the original file name?
+- From MFT file find svchost. Using the entry number and check from usnjournal.
+
+15. Trying to unleash the attacker's actions, the team inspected system event logs, showing an access denied login attempt to one file on the system using the "administrator account. What is the file name?
+- Filter event logs by 4656. 
+
+16. Lateral movements and pivoting from one machine to another is a common technique attackers use to explore the network, hoping to find valuable data and higher privileges (e.g., domain admin).
+The attacker tried to access a network share. What is the IP address of the system hosting that share?
+- 10.10.5.86 found in sysmon logs when filter with eventid 1 and keyword telegram.
+
+17. What is the name of the file the attacker accessed on the remote share? In Uber breach, this happens to be a script containing domain admin credentials in plain text!
+- lansweeper.ps1. This file is found on the recents folder but not found in recentdocs and jumplist explorer. Opening the properties of lansweeper shows the location of the file which is the shared folder.
+
+
+
+
+
+
+
+
+
+for /r %i in (*) do (C:\Tools\RegRipper\rip.exe -r %i -a > %i.txt)
