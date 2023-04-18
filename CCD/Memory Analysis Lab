@@ -10,11 +10,11 @@ Q1 and Q2 can be answered by kdbgscan plugin.
 - In psxview there are 2 lsass process running. There should not be 2 LSASS. One of it does not have a parent process. That is the rouge process.
 
 6. What is the process command line of the Sysinternals tool? Provide the entire command with arguments.
-- Using strings on the dump file can will see C:\Windows\lsass.exe\procdump64.exe show up. Something is wrong with the lsass location. Search the memory dump using strings.exe -f memory.dmp | select-string "C:\Windows\lsass.exe".
+- Use psinfo module on the malicious PID. You will see the full command line "C:\Windows\lsass.exe" -accepteula -ma 656 lsass.dmp
 - From the arguments, most likely attacker is trying to dump lsass using procdump.
 
 7. Trace back the source of the Sysinternals tool process. What is the PID of the process that spawned the Sysinternal tool process?
-- Guess that it was the powershell malicious process from earlier.
+- Answer can be together with Q6 with psinfo command.
 
 8. Most attackers utilize the Windows registry to create files and perform other malicious tasks. However, registry changes are not reflected instantly (remember dirty hives?). In similar situations, determining created files can help you understand what happened even if you do not have visibility over registry changes.
 The attacker created the following file 'C:\Windows\System32\svchost.bat'. What are the IP and port used for communications?
