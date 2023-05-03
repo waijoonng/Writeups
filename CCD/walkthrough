@@ -1,0 +1,47 @@
+1. Usually, the first step in the analysis is to highlight the malicious activity and determine the attack source. What is the attacker IP address?
+- Search by HTTP request method. POST had a suspicious entry from 113.26.232.2 to 1.174.208.130.
+
+2. The second step would be to figure out the attacker's entry point. What is the URL of the webpage through which the payload was delivered?
+- Following the POST stream we see above, attacker put a malicious file called Urgent Support.iso into http://www.mindtech.net/contact.php
+
+3. It's time to dig deep. Analyze the captured HTTP requests and provide the name of the malicious payload (file).
+- Answered in Q2
+
+4. What command did the attacker execute to stop system protection and obtain reverse shell access?
+- Extract the iso file or find the strings of it.11
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+G-w hidden "Set-MpPreference -DisableRealtimeMonitoring 1; D:\ADOBE.exe""%systemroot%\system32\imageres.dll` 
+
+
+5. Command and Control servers (also known as C2) are popular artifacts you will experience in real attacks. What is the name of the C2 tool the attacker utilized? Hint: Virustotal can be helpful!
+- Searching file name of C2-agent-parser returned cobalt strike as results.
+
+
+6. Which port did the C2 agent use to communicate with the server? Hint: use python3 to run 'c2-agent-parser' script in the 'Tools - Network Forensics' folder.
+- Extract the iso file contents
+
+7. What is the IP address of the endpoint through which the attacker gained initial access to the network?
+-  A lot of POST to attacker IP /submit.php?id=xxxxx and  GET /en_US/all.js from 10.0.128.130
+
+
+8. Like most enterprises, the corporate firewall blocks outbound traffic originating from the web server. In order to exfiltrate data from the web server, the attack had to copy it first to the compromised endpoint. What protocol was used to transfer data of interest?
+- Smb2 and ip.addr eq 1.174.208.130. Saw some suspicious traffic.
+
+
+
+9. What is the name of the directory the attacker was trying to exfiltrate?
+- Check the export object tab
+
+
+10. The SIEM flagged multiple suspicious RDP sessions between the compromised endpoint and the web server. How long was the last session in seconds (round to the nearest second)?
+- Find in wireshark statistics
+ 
+
+
+
+ Server IP = 1.174.208.130 (www.mindtech.net)
+
+
+https://www.youtube.com/watch?v=PO8KZxwIqWo
+https://unit42.paloaltonetworks.com/cobalt-strike-malleable-c2-profile/
+
